@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+
+    <changeSet id="1699369718127-1" author="Tassneem">
+        <createTable tableName="role">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role"/>
+            </column>
+            <column name="version" type="INT"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="DATETIME"/>
+            <column name="modified_date" type="DATETIME"/>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1699369866569-1" author="Tassneem">
+        <createTable tableName="app_user">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_app_user"/>
+            </column>
+            <column name="version" type="INT"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="modified_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="DATETIME"/>
+            <column name="modified_date" type="DATETIME"/>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1699369879924-1" author="Tassneem">
+        <createTable tableName="user_role">
+            <column name="role_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_role"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_role" constraintName="fk_user_role_on_app_user" referencedColumnNames="id" referencedTableName="app_user"/>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_role" constraintName="fk_user_role_on_role" referencedColumnNames="id" referencedTableName="role"/>
+    </changeSet>
+
+
+</databaseChangeLog>

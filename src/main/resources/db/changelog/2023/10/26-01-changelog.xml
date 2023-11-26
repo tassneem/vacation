@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="1698276080820-1" author="Tassneem">
+        <createTable tableName="employee">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_employee"/>
+            </column>
+            <column name="salary" type="DOUBLE"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="join_date" type="VARCHAR(255)"/>
+            <column name="date_of_birth" type="VARCHAR(255)"/>
+            <column name="mobile" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="gender" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1698277512158-1" author="Tassneem">
+        <createTable tableName="vacation_type">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_vacationtype"/>
+            </column>
+            <column name="arabic_description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1698276126906-1" author="Tassneem">
+        <createTable tableName="vacation">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_vacation"/>
+            </column>
+            <column name="start_date" type="VARCHAR(255)"/>
+            <column name="start_time" type="VARCHAR(255)"/>
+            <column name="end_date" type="VARCHAR(255)"/>
+            <column name="end_time" type="VARCHAR(255)"/>
+            <column name="vacation_type_id" type="INT"/>
+            <column name="employee_id" type="INT"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="employee_id" baseTableName="vacation" constraintName="FK_VACATION_ON_EMPLOYEE" referencedColumnNames="id" referencedTableName="employee"/>
+        <addForeignKeyConstraint baseColumnNames="vacation_type_id" baseTableName="vacation" constraintName="FK_VACATION_ON_VACATION_TYPE" referencedColumnNames="id" referencedTableName="vacation_type"/>
+    </changeSet>
+    <changeSet id="1698277512158-1" author="Tassneem">
+        <createTable tableName="vacation_type">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_vacationtype"/>
+            </column>
+            <column name="arabic_description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>
