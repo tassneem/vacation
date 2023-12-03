@@ -4,10 +4,10 @@
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="461"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="526"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="company"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Vacation"/>
 	<parameter name="employeeId" class="java.lang.Integer"/>
 	<queryString language="SQL">
-		<![CDATA[select * from employee where id=$P{employeeId} or $P{employeeId} is null]]>
+		<![CDATA[select id,salary,english_name from employee where id=$P{employeeId} or $P{employeeId} is null]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="id"/>
@@ -19,14 +19,9 @@
 		<property name="com.jaspersoft.studio.field.label" value="salary"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
 	</field>
-	<field name="name" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="name"/>
-		<property name="com.jaspersoft.studio.field.label" value="name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
-	</field>
-	<field name="arname" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="arname"/>
-		<property name="com.jaspersoft.studio.field.label" value="arname"/>
+	<field name="english_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="english_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="english_name"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
 	</field>
 	<background>
@@ -122,7 +117,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{english_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="380" y="0" width="175" height="46" uuid="dbfa51a0-b08c-48dd-827d-37ec9e193dd7">

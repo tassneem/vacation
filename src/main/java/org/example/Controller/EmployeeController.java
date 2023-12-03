@@ -1,16 +1,20 @@
 package org.example.Controller;
 
+
 import lombok.AllArgsConstructor;
 import org.example.Handler.EmployeeHandler;
 import org.example.dto.EmployeeDto;
 import org.example.services.EmployeeService;
+import org.example.utils.ReportFormat;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 @RequestMapping("/employee")
 @AllArgsConstructor
+
 public class EmployeeController {
     private EmployeeHandler employeeHandler;
 
@@ -21,9 +25,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/report")
-    public void generateReport()
+
+    public void generateReport(HttpServletResponse response, @RequestParam(name = "employeeId", required = false) Integer employeeId,
+                               @RequestParam(name = "language", required = false) String language,
+                               @RequestParam(name = "format", required = false,defaultValue = "pdf") ReportFormat format)
     {
-        employeeHandler.generateReport();
+        employeeHandler.generateReport(response,employeeId,language,format);
     }
     @GetMapping("/{id}")
     public EmployeeDto getById(@PathVariable(value = "id") Integer id)

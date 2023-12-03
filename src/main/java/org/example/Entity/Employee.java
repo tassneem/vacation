@@ -17,11 +17,11 @@ public class Employee {
     @Column
     private Double salary;
 
-    @Column ( name = "last_name")
-    private String lastName;
+    @Column ( name = "arabic_name")
+    private String arabicName;
 
-    @Column ( name = "first_name")
-    private String firstName;
+    @Column ( name = "english_name")
+    private String englishName;
 
     @Column ( name = "join_date")
     private String joinDate;

@@ -7,10 +7,12 @@ import org.example.dto.EmployeeDto;
 import org.example.mapper.EmployeeMapper;
 import org.example.services.EmployeeService;
 import org.example.utils.JasperReportUtiles;
+import org.example.utils.ReportFormat;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -26,7 +28,7 @@ public class EmployeeHandler {
         List<EmployeeDto> dtoList=employeeMapper.toDto(employeeList);
         return dtoList;
     }
-    public EmployeeDto getById(Integer id)
+   public EmployeeDto getById(Integer id)
     {
         Employee employee= employeeService.getById(id).
                 orElseThrow(() -> new ResourceNotFoundException(Employee.class.getSimpleName(), id));
@@ -61,9 +63,17 @@ public class EmployeeHandler {
         else
             System.out.println("not found in delete");
     }
-    public void generateReport()
-    {
-        jasperReportUtiles.gerarJasper();
+    public void generateReport( HttpServletResponse response , Integer employeeId, String language, ReportFormat format) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("employeeId", employeeId);
+        parameters.put("language",language);
+        List <String> subReport = new ArrayList<>();
+        subReport.add("employee_English");
+        subReport.add("employee_Arabic");
+
+        jasperReportUtiles.generateJasper(response ,parameters,subReport,format);
     }
+
 
 }

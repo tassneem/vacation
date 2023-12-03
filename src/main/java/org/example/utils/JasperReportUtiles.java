@@ -3,37 +3,106 @@ package org.example.utils;
 import lombok.AllArgsConstructor;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRSaver;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.awt.*;
 import java.io.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-
-import java.util.List;
 @AllArgsConstructor
 @Component
+
 public class JasperReportUtiles {
-    public void gerarJasper() {
+
+
+    private final DataSource dataSource;
+    private static String reportName="employee";
+   // private static String subName="employee_Arabic";
+
+    public void generateJasper(HttpServletResponse response, Map<String, Object> parameters, List<String> subReportName,ReportFormat format) {
+        Connection connection = null;
+
         try {
-            // Set up a JDBC connection (replace with your database details)
-            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/vacation", "postgres", "123456");
 
-            // Load the JasperReport template (replace with your .jrxml or .jasper file)
-            JasperReport jasperReport = JasperCompileManager.compileReport("jasperReport/employee_English.jrxml");
+            connection = dataSource.getConnection();
+            File mainReport = new File(new File(reportName + ".jasper").getAbsolutePath());
 
-            // Set up parameters (if your report requires any)
-            Map<String, Object> parameters = new HashMap<>();
+            if (!mainReport.exists()) {
+                ClassPathResource classPathResource = new ClassPathResource("jasperReport/" + reportName + ".jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport(classPathResource.getInputStream());
+                JRSaver.saveObject(jasperReport, reportName + ".jasper");
+            }
+            if (subReportName != null) {
+                for (String subName : subReportName) {
+                    File subReport = new File(new File(subName + ".jasper").getAbsolutePath());
+                    if (!subReport.exists()) {
+                        ClassPathResource subClassPathResource = new ClassPathResource("jasperReport/" + subName + ".jrxml");
+                        JasperReport subJasperReport = JasperCompileManager.compileReport(subClassPathResource.getInputStream());
+                        JRSaver.saveObject(subJasperReport, subName + ".jasper");
+                    }
+                    parameters.put("subReportJasperFile", subReport);
+                }
+            }
+
 
             // Fill the report with data
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(String.valueOf(mainReport), parameters, connection);
 
-            // Export the report to PDF (you can change the format as needed)
-            exportToPDF(jasperPrint, "C:\\Users\\Tassneem\\Desktop\\senior\\project.pdf");
+            // Set up exporter based on the chosen format
+            if (ReportFormat.PDF.equals(format)) {
+                // Set up response for PDF
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=" + reportName + ".pdf");
 
+                // Other PDF-related configurations
+
+                // Export the report to PDF
+                JRPdfExporter exporter = new JRPdfExporter();
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+                exporter.exportReport();
+            } else if (ReportFormat.DOCX.equals(format)){
+                // Set up response for Word document
+                response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                response.setHeader("Content-Disposition", "attachment; filename=" + reportName + ".docx");
+
+                // Other Word-related configurations
+
+                // Export the report to Word
+                JRDocxExporter exporter = new JRDocxExporter();
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+                exporter.exportReport();
+            }
+            else if (ReportFormat.EXCEL.equals(format)) {
+                // Excel-related configurations...
+                response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                response.setHeader("Content-Disposition", "attachment; filename=" + reportName + ".xlsx");
+
+                // Export the report to Excel
+                JRXlsxExporter exporter = new JRXlsxExporter();
+                // Configure Excel exporter settings
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+                exporter.exportReport();
+            }
+            else {
+                // Handle unsupported format
+                throw new IllegalArgumentException("Unsupported format: " + format);
+            }
             // Close the database connection
             connection.close();
 
@@ -43,14 +112,6 @@ public class JasperReportUtiles {
         }
     }
 
-    private static void exportToPDF(JasperPrint jasperPrint, String outputPath)  {
-
-        try {
-            JasperExportManager.exportReportToPdfFile(jasperPrint, outputPath);
-        } catch (JRException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
 
